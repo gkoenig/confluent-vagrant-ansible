@@ -1,0 +1,17 @@
+---
+- hosts: all
+  roles:
+    - common
+
+- hosts: zookeepers
+  roles:
+    - zookeeper
+    
+- hosts: confluentmasters
+  roles:
+    - restproxy
+    - schemaregistry
+
+- hosts: workers
+  roles:
+    - kafkabroker

@@ -1,0 +1,14 @@
+- name: Install confluent restproxy
+  yum: name=confluent-kafka-rest state=present update_cache=yes
+  become: true
+
+- name: Create services
+  template: src=confluent-kafka-rest.service.j2 dest=/usr/lib/systemd/system/confluent-kafka-rest.service owner=root group=root mode=0755
+  become: true
+  notify:
+    - systemdreload
+    - enableRestproxyService
+
+- name: restart confluent-kafka-rest
+  shell: service confluent-kafka-rest restart
+  become: true

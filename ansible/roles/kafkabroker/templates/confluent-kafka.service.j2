@@ -1,0 +1,13 @@
+[Unit]
+Description = Confluent Platform: Kafka
+Documentation = http://www.confluent.io
+After = network.target remote-fs.target nss-lookup.target confluent-zookeeper.service
+
+[Service]
+SyslogIdentifier = confluent-kafka
+User = confluent
+Type = simple
+ExecStart = /usr/bin/kafka-server-start /etc/kafka/server.properties
+
+[Install]
+WantedBy = multi-user.target confluent-schema-registry.service

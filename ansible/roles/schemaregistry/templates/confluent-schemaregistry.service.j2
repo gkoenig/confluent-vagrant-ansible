@@ -1,0 +1,15 @@
+[Unit]
+Description = Confluent Platform: Schema Registry
+Documentation = http://www.confluent.io
+After = network.target remote-fs.target nss-lookup.target confluent-kafka.service
+
+[Service]
+SyslogIdentifier = confluent-schema-registry
+User = confluent
+Type = simple
+ExecStart = /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties
+Restart = on-failure
+RestartSec = 10
+
+[Install]
+WantedBy = multi-user.target 

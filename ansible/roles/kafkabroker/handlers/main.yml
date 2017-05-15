@@ -1,0 +1,9 @@
+- name: systemdreload
+  become: yes
+  become_user: root
+  command: systemctl daemon-reload
+
+- name: enableKafkaService
+  become: yes
+  become_user: root
+  command: systemctl enable confluent-kafka.service

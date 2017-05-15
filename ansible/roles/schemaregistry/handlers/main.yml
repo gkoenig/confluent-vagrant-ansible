@@ -1,0 +1,9 @@
+- name: systemdreload
+  become: yes
+  become_user: root
+  command: systemctl daemon-reload
+
+- name: enableSchemaregistryService
+  become: yes
+  become_user: root
+  command: systemctl enable confluent-schemaregistry.service

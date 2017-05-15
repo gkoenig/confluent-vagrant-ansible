@@ -1,0 +1,10 @@
+- name: register zookeeper service
+  template: src=confluent-zookeeper.service.j2 dest=/usr/lib/systemd/system/confluent-zookeeper.service owner=root group=root mode=0644
+  become: true
+  notify:
+    - systemdreload
+    - enableZookeeperService
+
+- service:
+    name: confluent-zookeeper
+    state: started

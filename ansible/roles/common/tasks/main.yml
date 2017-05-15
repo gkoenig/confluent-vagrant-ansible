@@ -1,0 +1,46 @@
+- selinux:
+    state: disabled
+
+- name: Install EPEL repo
+  yum: name=epel-release update_cache=yes state=present
+  become: true
+
+- name: install base packages
+  yum: name={{ item }} state=present update_cache=yes
+  become: true
+  with_items:
+    - htop
+    - curl
+    - wget
+    - ntp
+
+- name: Create group for Kafka user
+  group: name=confluent state=present
+  become: true
+- name: Create user
+  user: name=confluent group=confluent
+  become: true
+- name: create confluent-kafka related directories
+  file: path={{ item.path }} state=directory owner=confluent group=confluent mode=0755 recurse=yes
+  with_items:
+    - { path: "/etc/kafka", owner: "confluent" }
+    - { path: "/var/log/kafka", owner: "confluent" }
+    - { path: "/var/lib/kafka", owner: "confluent" }
+    - { path: "/var/lib/zookeeper", owner: "confluent" }
+  become: true
+
+- name: Install java openjdk
+  yum: name=java-1.8.0-openjdk update_cache=yes state=present
+  become: true
+
+- name: Install key for confluent repository
+  rpm_key:  state=present key=http://packages.confluent.io/deb/3.2/archive.key
+  become: true
+
+- name: Install confluent repo
+  template: src=confluent.repo.j2 dest=/etc/yum.repos.d/confluent.repo owner=root group=root mode=0755
+  become: true
+
+- name: Install confluent platform
+  yum: name=confluent-platform-2.11 state=present update_cache=yes
+  become: true

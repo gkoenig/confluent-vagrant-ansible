@@ -1,0 +1,10 @@
+- name: set Kafka broker config
+  template: src=server.properties.j2 dest=/etc/kafka/server.properties mode=0644
+  become: true
+
+- name: register Kafka service
+  template: src=confluent-kafka.service.j2 dest=/usr/lib/systemd/system/confluent-kafka.service owner=root group=root mode=0755
+  become: true
+  notify:
+    - systemdreload
+    - enableKafkaService
