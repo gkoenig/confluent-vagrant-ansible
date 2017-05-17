@@ -1,15 +1,13 @@
-
-# Toogle start/stop agent when pleased
 varDomain = "scigility.demo"
 
 # INSTALLATION PACKAGES LOCATION
 varRepo   = "~/resources"
 
 cluster_nodes = [
-  { :id => 1, :host => "confluent-1", :ram => 2048, :cpu => 1,:ip => "10.10.10.11", :box => "boxcutter/centos73", :gui => false},
-  { :id => 2, :host => "confluent-2", :ram => 2048, :cpu => 1,:ip => "10.10.10.12", :box => "boxcutter/centos73", :gui => false},
-  { :id => 3, :host => "confluent-3", :ram => 2048, :cpu => 1,:ip => "10.10.10.13", :box => "boxcutter/centos73", :gui => false},
-  { :id => 4, :host => "confluent-4", :ram => 2048, :cpu => 1,:ip => "10.10.10.14", :box => "boxcutter/centos73", :gui => false}
+  { :id => "1", :host => "confluent-1", :ram => 2048, :cpu => 1,:ip => "10.10.10.11", :box => "boxcutter/centos73", :gui => false},
+  { :id => "2", :host => "confluent-2", :ram => 2048, :cpu => 1,:ip => "10.10.10.12", :box => "boxcutter/centos73", :gui => false},
+  { :id => "3", :host => "confluent-3", :ram => 2048, :cpu => 1,:ip => "10.10.10.13", :box => "boxcutter/centos73", :gui => false},
+  { :id => "4", :host => "confluent-4", :ram => 2048, :cpu => 1,:ip => "10.10.10.14", :box => "boxcutter/centos73", :gui => false}
 ]
 
 ## ################################################################
@@ -45,6 +43,10 @@ Vagrant.configure("2") do | config |
   cluster_nodes.each do |cluster_node|
     config.vm.define cluster_node[:host] do | config |
 
+      if Vagrant.has_plugin?("vagrant-timezone")
+        config.timezone.value = :host
+      end
+
       config.vm.provider :virtualbox do |v|
         v.name = cluster_node[:host].to_s
         v.gui = cluster_node[:gui]
@@ -70,7 +72,8 @@ Vagrant.configure("2") do | config |
       config.vm.synced_folder varRepo, "/resources", id: "resources", owner: "vagrant", group: "vagrant"
     end
 
-    if cluster_node[:id] == 4
+    if cluster_node[:id] == "4"
+
       config.vm.provision :ansible do |ansible|
         # Disable default limit to connect to all the machines
         ansible.limit = "all"
@@ -79,6 +82,10 @@ Vagrant.configure("2") do | config |
         ansible.groups = {
           "confluentmasters" => ["confluent-1","confluent-2"],
           "workers" => ["confluent-1","confluent-2","confluent-3","confluent-4"],
+          "workers:vars" => {"zkConnect" => "confluent-1:2181,confluent-2:2181,confluent-3:2181",
+                             "schemaregistryUrl" => "http://confluent-1:8081,http://confluent-2:8081",
+                             "restBootstrapServers" => "PLAINTEXT://confluent-1:9092"
+                            },
           "zookeepers" => ["confluent-1","confluent-2","confluent-3"]
         }
         ansible.host_vars = {
@@ -89,5 +96,6 @@ Vagrant.configure("2") do | config |
         }
       end
     end
+
   end
 end

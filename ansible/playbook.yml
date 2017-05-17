@@ -6,12 +6,12 @@
 - hosts: zookeepers
   roles:
     - zookeeper
-    
-- hosts: confluentmasters
-  roles:
-    - restproxy
-    - schemaregistry
 
 - hosts: workers
   roles:
     - kafkabroker
+        
+- hosts: confluentmasters
+  roles:
+    - restproxy
+    - schemaregistry

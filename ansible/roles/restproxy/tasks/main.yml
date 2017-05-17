@@ -2,8 +2,11 @@
   yum: name=confluent-kafka-rest state=present update_cache=yes
   become: true
 
+- name: set Kafka rest config
+  template: src=kafka-rest.properties.j2 dest=/etc/kafka-rest/kafka-rest.properties mode=0644
+
 - name: Create services
-  template: src=confluent-kafka-rest.service.j2 dest=/usr/lib/systemd/system/confluent-kafka-rest.service owner=root group=root mode=0755
+  template: src=confluent-kafka-rest.service.j2 dest=/usr/lib/systemd/system/confluent-kafka-rest.service owner=root group=root mode=0644
   become: true
   notify:
     - systemdreload

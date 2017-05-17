@@ -2,8 +2,11 @@
   yum: name=confluent-schema-registry state=present update_cache=yes
   become: true
 
+- name: set schema-registry config
+  template: src=schema-registry.properties.j2 dest=/etc/schema-registry/schema-registry.properties mode=0644
+
 - name: Create services
-  template: src=confluent-schemaregistry.service.j2 dest=/usr/lib/systemd/system/confluent-schemaregistry.service owner=root group=root mode=0755
+  template: src=confluent-schema-registry.service.j2 dest=/usr/lib/systemd/system/confluent-schema-registry.service owner=root group=root mode=0644
   become: true
   notify:
     - systemdreload

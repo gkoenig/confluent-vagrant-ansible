@@ -6,4 +6,4 @@
 - name: enableSchemaregistryService
   become: yes
   become_user: root
-  command: systemctl enable confluent-schemaregistry.service
+  command: systemctl enable confluent-schema-registry.service

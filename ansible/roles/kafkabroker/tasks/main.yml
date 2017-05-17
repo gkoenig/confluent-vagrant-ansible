@@ -3,7 +3,7 @@
   become: true
 
 - name: register Kafka service
-  template: src=confluent-kafka.service.j2 dest=/usr/lib/systemd/system/confluent-kafka.service owner=root group=root mode=0755
+  template: src=confluent-kafka.service.j2 dest=/usr/lib/systemd/system/confluent-kafka.service owner=root group=root mode=0644
   become: true
   notify:
     - systemdreload
