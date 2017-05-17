@@ -33,7 +33,7 @@ vagrant up
 If you need to modify the default settings (no. of nodes, size of node, host to group mapping, ...) just open [Vagrantfile](./Vagrantfile) and adjust them accordingly.
 
 ## Hickups
-the whole setup does not run absolutely flawless but installs and configures the tools in a usable manner, check [Issues](./issues/) also for queued enhancements.    
+the whole setup does not run absolutely flawless but installs and configures the tools in a usable manner, check [Issues](https://github.com/gkoenig/confluent-vagrant-ansible/issues) also for queued enhancements.    
 Sometimes the Kafkabroker does not startup automatically, hence check it after ```vagrant up``` finished via e.g.
 ```
 for h in confluent-1 confluent-2 confluent-3 confluent-4; do vagrant ssh $h -c "echo "" && echo $h && echo "" && service confluent-kafka status | grep -E3 'Active:'"; done
