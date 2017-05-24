@@ -1,0 +1,68 @@
+---
+- name: Install krb5-server
+  register: install
+  package: name=krb5-server state=present
+
+- name: Copy kdc configuration file
+  template: src=kdc.conf.j2 dest=/var/kerberos/krb5kdc/kdc.conf
+
+- name: check for KDC database
+  shell: kdb5_util dump | grep scigility.demo
+  register: kdb5dump
+
+- name: Create kdc database
+  shell: echo -e "{{ kdc_database_master_key }}\n{{ kdc_database_master_key }}" | kdb5_util create -s
+  when: kdb5dump.stdout.find('scigility.demo') == -1
+
+- name: Ensure kadm5.acl exists
+  file:
+    path: /var/kerberos/krb5kdc/kadm5.acl
+    state: touch
+
+- stat:
+    path: /var/kerberos/krb5kdc/kadm5.acl
+  register: kadm5
+
+- name: Ensure kdc admin have full control
+  lineinfile:
+    dest: /var/kerberos/krb5kdc/kadm5.acl
+    line: '*/admin@{{ kdc_realm }} *'
+  when: kadm5.stat.exists
+
+- name: Create a kdc admin
+  shell: kadmin.local -q "add_principal -pw {{ kdc_admin_password }} admin/admin"
+
+- name: Create Kerberos principal for 'reader' and 'writer'
+  shell: kadmin.local -q "add_principal -randkey {{ item }}"
+  with_items:
+    - reader
+    - writer
+
+- name: Get list of user keytabs
+  shell: ls -al /etc/security/*.user.keytab | awk -F '/' {'print $4'} | awk -F '.' {'print $1'}
+  register: listuserkeytabs
+
+- name: Create keytabs for users
+  shell: kadmin.local -q "xst -norandkey -kt /etc/security/{{ item }}.user.keytab {{ item }}"
+  with_items:
+    - reader
+    - writer
+  when: item not in listuserkeytabs.stdout_lines
+
+- name: adjust ownership of keytab files
+  file:
+    path: /etc/security/{{ item }}.user.keytab
+    owner: "{{ item }}"
+  with_items:
+    - reader
+    - writer
+  when: item not in listuserkeytabs.stdout_lines
+
+- name: Start kdc and admin server on master kdc
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - krb5kdc
+    - kadmin

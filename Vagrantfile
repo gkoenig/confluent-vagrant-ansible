@@ -4,6 +4,7 @@ varDomain = "scigility.demo"
 varRepo   = "~/resources"
 
 cluster_nodes = [
+  { :id => "0", :host => "edge", :ram => 2048, :cpu => 1,:ip => "10.10.10.10", :box => "boxcutter/centos73", :gui => false},
   { :id => "1", :host => "confluent-1", :ram => 2048, :cpu => 1,:ip => "10.10.10.11", :box => "boxcutter/centos73", :gui => false},
   { :id => "2", :host => "confluent-2", :ram => 2048, :cpu => 1,:ip => "10.10.10.12", :box => "boxcutter/centos73", :gui => false},
   { :id => "3", :host => "confluent-3", :ram => 2048, :cpu => 1,:ip => "10.10.10.13", :box => "boxcutter/centos73", :gui => false},
@@ -78,15 +79,23 @@ Vagrant.configure("2") do | config |
         # Disable default limit to connect to all the machines
         ansible.limit = "all"
         ansible.playbook = "ansible/playbook.yml"
-        ansible.verbose = "vv"
+        ansible.verbose = "v"
         ansible.groups = {
           "confluentmasters" => ["confluent-1","confluent-2"],
           "workers" => ["confluent-1","confluent-2","confluent-3","confluent-4"],
-          "workers:vars" => {"zkConnect" => "confluent-1:2181,confluent-2:2181,confluent-3:2181",
+          "workers:vars" => {"kdc_master_kdc" => "edge",
+                             "kdc_realm" => "scigility.demo",
+                             "zkConnect" => "confluent-1.scigility.demo:2181,confluent-2.scigility.demo:2181,confluent-3.scigility.demo:2181",
                              "schemaregistryUrl" => "http://confluent-1:8081,http://confluent-2:8081",
                              "restBootstrapServers" => "PLAINTEXT://confluent-1:9092"
                             },
-          "zookeepers" => ["confluent-1","confluent-2","confluent-3"]
+          "zookeepers" => ["confluent-1","confluent-2","confluent-3"],
+          "edge-nodes" => ["edge"],
+          "edge-nodes:vars" => {"kdc_master_kdc" => "edge",
+                                "kdc_realm" => "scigility.demo",
+                                "kdc_database_master_key" => "admin",
+                                "kdc_admin_password" => "admin"
+                              }
         }
         ansible.host_vars = {
           "confluent-1" => {"brokerid" => 1},

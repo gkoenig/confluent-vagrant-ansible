@@ -10,8 +10,12 @@
 - hosts: workers
   roles:
     - kafkabroker
-        
+
 - hosts: confluentmasters
   roles:
     - restproxy
     - schemaregistry
+
+- hosts: edge-nodes
+  roles:
+    - kdc

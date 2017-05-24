@@ -1,0 +1,24 @@
+[logging]
+  default = FILE:/var/log/krb5libs.log
+  kdc = FILE:/var/log/krb5kdc.log
+  admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+    default_realm = {{ kdc_realm}}
+    kdc_timesync = 1
+    ticket_lifetime = 24h
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ccache_type = 4
+    forwardable = true
+    proxiable = true
+    fcc-mit-ticketflags = true
+    default_keytab_name = FILE:/etc/krb5.keytab
+
+[domain_realm]
+
+[realms]
+    {{ kdc_realm }} = {
+      admin_server = {{ kdc_master_kdc }}
+      kdc  = {{ kdc_master_kdc }}
+      }

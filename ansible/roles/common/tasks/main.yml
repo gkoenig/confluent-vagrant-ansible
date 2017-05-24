@@ -29,6 +29,12 @@
     - { path: "/var/lib/zookeeper", owner: "confluent" }
   become: true
 
+- name: create sample 'end-'users
+  user: name={{ item }}
+  with_items:
+    - reader
+    - writer
+
 - name: Install java openjdk
   yum: name=java-1.8.0-openjdk update_cache=yes state=present
   become: true
@@ -44,3 +50,12 @@
 - name: Install confluent platform
   yum: name=confluent-platform-2.11 state=present update_cache=yes
   become: true
+
+- name: Install Kerberos client packages
+  package: name="{{ item }}" state=present
+  with_items:
+    - krb5-libs
+    - krb5-workstation
+
+- name: Copy krb5 configuration file
+  template: src=krb5.conf.j2 dest=/etc/krb5.conf
