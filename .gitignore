@@ -1,5 +1,4 @@
 .vagrant
-*.gz
 .DS_Store
 *.parcel
 *.retry

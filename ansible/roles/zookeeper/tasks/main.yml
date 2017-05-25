@@ -1,3 +1,16 @@
+- name: create Zookeeper related symlinks
+  file:
+    src={{ item.src }}
+    dest={{ item.dest }}
+    state=link
+    owner=confluent group=confluent
+    force=yes
+    remote_src=True
+  with_items:
+    - { dest: '/usr/bin/zookeeper-server-start', src: '/opt/confluent/bin/zookeeper-server-start' }
+    - { dest: '/usr/bin/zookeeper-server-stop', src: '/opt/confluent/bin/zookeeper-server-stop' }
+    - { dest: '/usr/bin/zookeeper-shell', src: '/opt/confluent/bin/zookeeper-shell' }
+
 - name: register zookeeper service
   template: src=confluent-zookeeper.service.j2 dest=/usr/lib/systemd/system/confluent-zookeeper.service owner=root group=root mode=0644
   become: true

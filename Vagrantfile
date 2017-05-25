@@ -1,7 +1,7 @@
 varDomain = "scigility.demo"
 
 # INSTALLATION PACKAGES LOCATION
-varRepo   = "~/resources"
+varRepo   = "./resources"
 
 cluster_nodes = [
   { :id => "0", :host => "edge", :ram => 2048, :cpu => 1,:ip => "10.10.10.10", :box => "boxcutter/centos73", :gui => false},
