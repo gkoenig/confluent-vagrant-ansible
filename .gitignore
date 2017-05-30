@@ -1,5 +1,5 @@
 .vagrant
-*.gz
 .DS_Store
+keytabs
 *.parcel
 *.retry

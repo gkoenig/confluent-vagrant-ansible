@@ -1,0 +1,16 @@
+KafkaServer {
+    com.sun.security.auth.module.Krb5LoginModule required
+    useKeyTab=true
+    storeKey=true
+    keyTab="/vagrant/keytabs/kafka.user.keytab"
+    principal="kafka@{{ kdc_realm }}";
+};
+
+// ZooKeeper client authentication
+Client {
+    com.sun.security.auth.module.Krb5LoginModule required
+    useKeyTab=true
+    storeKey=true
+    keyTab="/vagrant/keytabs/zookeeper.user.keytab"
+    principal="zookeeper@{{ kdc_realm }}";
+};

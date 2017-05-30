@@ -3,6 +3,10 @@
   roles:
     - common
 
+- hosts: edge-nodes
+  roles:
+    - kdc
+
 - hosts: zookeepers
   roles:
     - zookeeper
@@ -15,7 +19,3 @@
   roles:
     - restproxy
     - schemaregistry
-
-- hosts: edge-nodes
-  roles:
-    - kdc

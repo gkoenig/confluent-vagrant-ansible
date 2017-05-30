@@ -1,0 +1,6 @@
+
+export SERVER_JVMFLAGS=-Xmx512m
+
+
+export SERVER_JVMFLAGS="$SERVER_JVMFLAGS -Djava.security.auth.login.config=/etc/kafka/zookeeper_jaas.conf"
+export CLIENT_JVMFLAGS="$CLIENT_JVMFLAGS -Djava.security.auth.login.config=/etc/kafka/zookeeper_client_jaas.conf"

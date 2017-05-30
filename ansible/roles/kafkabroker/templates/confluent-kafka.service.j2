@@ -7,7 +7,7 @@ After = network.target remote-fs.target nss-lookup.target confluent-zookeeper.se
 SyslogIdentifier = confluent-kafka
 User = confluent
 Type = simple
-ExecStart = /usr/bin/kafka-server-start /etc/kafka/server.properties
+ExecStart = /opt/confluent/bin/kafka-server-start /etc/kafka/server.properties
 
 [Install]
 WantedBy = multi-user.target confluent-schema-registry.service

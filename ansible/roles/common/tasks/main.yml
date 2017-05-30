@@ -13,49 +13,81 @@
     - curl
     - wget
     - ntp
-
-- name: Create group for Kafka user
-  group: name=confluent state=present
-  become: true
-- name: Create user
-  user: name=confluent group=confluent
-  become: true
-- name: create confluent-kafka related directories
-  file: path={{ item.path }} state=directory owner=confluent group=confluent mode=0755 recurse=yes
-  with_items:
-    - { path: "/etc/kafka", owner: "confluent" }
-    - { path: "/var/log/kafka", owner: "confluent" }
-    - { path: "/var/lib/kafka", owner: "confluent" }
-    - { path: "/var/lib/zookeeper", owner: "confluent" }
-  become: true
-
-- name: create sample 'end-'users
-  user: name={{ item }}
-  with_items:
-    - reader
-    - writer
+    - tree
+    - lsof
+    - screen
+    - krb5-workstation
 
 - name: Install java openjdk
   yum: name=java-1.8.0-openjdk update_cache=yes state=present
   become: true
 
-- name: Install key for confluent repository
-  rpm_key:  state=present key=http://packages.confluent.io/deb/3.2/archive.key
-  become: true
-
-- name: Install confluent repo
-  template: src=confluent.repo.j2 dest=/etc/yum.repos.d/confluent.repo owner=root group=root mode=0755
-  become: true
-
-- name: Install confluent platform
-  yum: name=confluent-platform-2.11 state=present update_cache=yes
-  become: true
-
-- name: Install Kerberos client packages
-  package: name="{{ item }}" state=present
+- name: Create group for Kafka user
+  group: name={{ item }} state=present
   with_items:
-    - krb5-libs
-    - krb5-workstation
+    - confluent
+    - readers
+    - writers
 
-- name: Copy krb5 configuration file
-  template: src=krb5.conf.j2 dest=/etc/krb5.conf
+- name: Create users
+  user: name={{ item.n }} group={{ item.g }}
+  with_items:
+    - { n: "confluent", g: "confluent" }
+    - { n: "kafka", g: "confluent" }
+    - { n: "reader", g: "readers" }
+    - { n: "writer", g: "writers" }
+    - { n: "zookeeper", g: "confluent"}
+
+- name: create confluent-kafka related directories
+  file: path={{ item.path }} state=directory owner=confluent group=confluent mode=0755 recurse=yes
+  with_items:
+    - { path: "/var/lib/kafka", owner: "confluent" }
+    - { path: "/var/lib/zookeeper", owner: "confluent" }
+
+- name: check if confluent target dir exists
+  stat:
+    path: /opt/confluent/bin
+  register: optconfluent
+
+- name: extract the confluent source tar.gz
+  unarchive:
+    src: /resources/confluent-oss-3.2.1-2.11.tar.gz
+    dest: /opt/
+    remote_src: True
+  when: optconfluent.stat.exists==false
+
+- name: create confluent related symlinks
+  file:
+    src={{ item.src }}
+    dest={{ item.dest }}
+    state=link
+    owner=confluent group=confluent
+    force=yes
+    remote_src=True
+  with_items:
+    - { dest: '/opt/confluent', src: '/opt/confluent-3.2.1/' }
+    - { dest: '/etc/kafka', src: '/opt/confluent/etc/kafka/' }
+    - { dest: '/etc/kafka-rest', src: '/opt/confluent/etc/kafka-rest/' }
+    - { dest: '/etc/schema-registry', src: '/opt/confluent/etc/schema-registry/' }
+
+- name: create confluent log dir
+  file: path={{ item.path }} state=directory owner=confluent group=confluent mode=0755 recurse=yes
+  with_items:
+    - { path: "/opt/confluent/logs", owner: "confluent" }
+
+- name: create symlink to confluent log
+  file: src=/opt/confluent/logs dest=/var/log/kafka state=link owner=confluent remote_src=true
+
+- name: copy confluent-stack env. script to profile.d
+  template: src=confluent-stack.sh.j2 dest=/etc/profile.d/confluent-stack.sh mode=0644
+
+- name: set kafka client configs
+  template: src={{ item }}.j2 dest=/etc/kafka/{{ item }} mode=0644
+  with_items:
+    - kafka_client_jaas.conf
+    - client-gssapi.properties
+    - client-plain.properties
+    - kafka-env.sh
+
+- name: set kerberos client configs
+  template: src=krb5.conf.j2 dest=/etc/krb5.conf mode=0644
