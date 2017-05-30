@@ -7,7 +7,7 @@ After = network.target remote-fs.target nss-lookup.target confluent-kafka.servic
 SyslogIdentifier = confluent-kafka-rest
 User = confluent
 Type = simple
-ExecStart = /usr/bin/kafka-rest-start /etc/kafka-rest/kafka-rest.properties
+ExecStart = /opt/confluent/bin/kafka-rest-start /etc/kafka-rest/kafka-rest.properties
 Restart = on-failure
 RestartSec = 10
 

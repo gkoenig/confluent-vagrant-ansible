@@ -6,13 +6,16 @@
 - name: Copy kdc configuration file
   template: src=kdc.conf.j2 dest=/var/kerberos/krb5kdc/kdc.conf
 
-- name: check for KDC database
-  shell: kdb5_util dump | grep scigility.demo
-  register: kdb5dump
 
-- name: Create kdc database
-  shell: echo -e "{{ kdc_database_master_key }}\n{{ kdc_database_master_key }}" | kdb5_util create -s
-  when: kdb5dump.stdout.find('scigility.demo') == -1
+- name: Check if kdc db is already in place
+  stat: path=/var/kerberos/krb5kdc/principal
+  register: kdc_db
+
+- debug: var=kdc_db
+
+- name: Create kdc database (! can take some minutes !)
+  shell: /usr/sbin/kdb5_util create -s -r {{ kdc_realm }} -P {{ kdc_database_master_key }}
+  when: kdc_db.stat.exists == false
 
 - name: Ensure kadm5.acl exists
   file:
@@ -32,30 +35,34 @@
 - name: Create a kdc admin
   shell: kadmin.local -q "add_principal -pw {{ kdc_admin_password }} admin/admin"
 
-- name: Create Kerberos principal for 'reader' and 'writer'
-  shell: kadmin.local -q "add_principal -randkey {{ item }}"
-  with_items:
-    - reader
-    - writer
+- name: Create base (user-) Kerberos principals
+  shell: kadmin.local -q 'add_principal -randkey {{ item[0] }}/{{ item[1] }}.{{ kdc_realm }}'
+  with_nested:
+    - [ "reader", "writer", "kafka", "zookeeper", "confluent" ]
+    - '{{ groups.all }}'
 
 - name: Get list of user keytabs
-  shell: ls -al /etc/security/*.user.keytab | awk -F '/' {'print $4'} | awk -F '.' {'print $1'}
+  shell: ls -al /keytabs/*.user.keytab | awk -F '/' {'print $4'} | awk -F '.' {'print $1'}
   register: listuserkeytabs
 
 - name: Create keytabs for users
-  shell: kadmin.local -q "xst -norandkey -kt /etc/security/{{ item }}.user.keytab {{ item }}"
-  with_items:
-    - reader
-    - writer
+  shell: kadmin.local -q "xst -norandkey -kt /keytabs/{{ item[0] }}.user.keytab {{ item[0] }}/{{ item[1] }}.{{ kdc_realm }}"
+  with_nested:
+    - [ reader, writer, kafka, zookeeper, confluent ]
+    - '{{ groups.all }}'
   when: item not in listuserkeytabs.stdout_lines
 
 - name: adjust ownership of keytab files
   file:
-    path: /etc/security/{{ item }}.user.keytab
+    path: /keytabs/{{ item }}.user.keytab
     owner: "{{ item }}"
+    mode: "0644"
   with_items:
     - reader
     - writer
+    - kafka
+    - zookeeper
+    - confluent
   when: item not in listuserkeytabs.stdout_lines
 
 - name: Start kdc and admin server on master kdc

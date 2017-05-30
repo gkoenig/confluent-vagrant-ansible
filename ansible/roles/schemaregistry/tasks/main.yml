@@ -9,13 +9,13 @@
   with_items:
     - { dest: '/usr/bin/schema-registry-start', src: '/opt/confluent/bin/schema-registry-start' }
     - { dest: '/usr/bin/schema-registry-stop', src: '/opt/confluent/bin/schema-registry-stop' }
-    
+
 - name: set schema-registry config
   template: src=schema-registry.properties.j2 dest=/etc/schema-registry/schema-registry.properties mode=0644
 
-- name: Create services
-  template: src=confluent-schema-registry.service.j2 dest=/usr/lib/systemd/system/confluent-schema-registry.service owner=root group=root mode=0644
-  become: true
-  notify:
-    - systemdreload
-    - enableSchemaregistryService
+#- name: Create services
+#  template: src=confluent-schema-registry.service.j2 dest=/usr/lib/systemd/system/confluent-schema-registry.service owner=root group=root mode=0644
+#  become: true
+#  notify:
+#    - systemdreload
+#    - enableSchemaregistryService

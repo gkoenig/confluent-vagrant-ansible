@@ -13,13 +13,13 @@
     - { dest: '/usr/bin/kafka-rest-start', src: '/opt/confluent/bin/kafka-rest-start' }
     - { dest: '/usr/bin/kafka-rest-stop', src: '/opt/confluent/bin/kafka-rest-stop' }
 
-- name: Create services
-  template: src=confluent-kafka-rest.service.j2 dest=/usr/lib/systemd/system/confluent-kafka-rest.service owner=root group=root mode=0644
-  become: true
-  notify:
-    - systemdreload
-    - enableRestproxyService
+#- name: Create services
+#  template: src=confluent-kafka-rest.service.j2 dest=/usr/lib/systemd/system/confluent-kafka-rest.service owner=root group=root mode=0644
+#  become: true
+#  notify:
+#    - systemdreload
+#    - enableRestproxyService
 
-- name: restart confluent-kafka-rest
-  shell: service confluent-kafka-rest restart
-  become: true
+#- name: restart confluent-kafka-rest
+#  shell: service confluent-kafka-rest restart
+#  become: true

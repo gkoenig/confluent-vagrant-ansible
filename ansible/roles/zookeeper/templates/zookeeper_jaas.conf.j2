@@ -1,0 +1,9 @@
+
+Server {
+com.sun.security.auth.module.Krb5LoginModule required
+useKeyTab=true
+storeKey=true
+useTicketCache=false
+keyTab="/vagrant/keytabs/zookeeper.user.keytab"
+principal="zookeeper@{{ kdc_realm }}";
+};

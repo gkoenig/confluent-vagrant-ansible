@@ -1,22 +1,12 @@
 - name: set Kafka broker config
-  template: src=server.properties.j2 dest=/etc/kafka/server.properties mode=0644
-  become: true
+  template: src=server.properties.j2 dest=/etc/kafka/server.properties mode=0644 owner=confluent
 
-- name: create Kafka-Broker related symlinks
-  file:
-    src={{ item.src }}
-    dest={{ item.dest }}
-    state=link
-    owner=confluent group=confluent
-    force=yes
-    remote_src=True
-  with_items:
-    - { dest: '/usr/bin/kafka-server-start', src: '/opt/confluent/bin/kafka-server-start' }
-    - { dest: '/usr/bin/kafka-server-stop', src: '/opt/confluent/bin/kafka-server-stop' }
-    
-- name: register Kafka service
-  template: src=confluent-kafka.service.j2 dest=/usr/lib/systemd/system/confluent-kafka.service owner=root group=root mode=0644
-  become: true
-  notify:
-    - systemdreload
-    - enableKafkaService
+- name: set broker jaas config
+  template: src=kafka_server_jaas.conf.j2 dest=/etc/kafka/kafka_server_jaas.conf mode=0644 owner=confluent
+
+#- name: register Kafka service
+#  template: src=confluent-kafka.service.j2 dest=/usr/lib/systemd/system/confluent-kafka.service owner=root group=root mode=0644
+#  become: true
+#  notify:
+#    - systemdreload
+#    - enableKafkaService

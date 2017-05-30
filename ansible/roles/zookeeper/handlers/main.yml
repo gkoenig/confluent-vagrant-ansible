@@ -1,9 +1,0 @@
-- name: systemdreload
-  become: yes
-  become_user: root
-  command: systemctl daemon-reload
-
-- name: enableZookeeperService
-  become: yes
-  become_user: root
-  command: systemctl enable confluent-zookeeper.service
