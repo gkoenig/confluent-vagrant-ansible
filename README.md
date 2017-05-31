@@ -30,8 +30,9 @@ git clone https://github.com/gkoenig/confluent-vagrant-ansible.git
 cd confluent-vagrant-ansible  
 vagrant up
 ```
-It will take some minutes to startup, especially the creation of the Kerberos database.  
-If you need to modify the default settings (no. of nodes, size of node, host to group mapping, ...) just open [Vagrantfile](./Vagrantfile) and adjust them accordingly.
+- It will take some minutes to startup, especially the creation of the Kerberos database.  
+- If you are facing issues while downloading the confluent tar.gz from GitHub LFS , try [this public URL](http://packages.confluent.io/archive/3.2/confluent-oss-3.2.1-2.11.tar.gz) to fetch Confluent stack v3.2.1  
+- If you need to modify the default settings (no. of nodes, size of node, host to group mapping, ...) just open [Vagrantfile](./Vagrantfile) and adjust them accordingly.
 
 
 ## Services startup
