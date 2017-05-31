@@ -26,7 +26,9 @@ Vagrant.configure("2") do | config |
   ########
   config.vm.define "edge" do |subconfig|
     subconfig.vm.box = BOX
-    subconfig.vm.hostname = "edge.#{varDomain}"
+    curHostname = "edge"
+    curFQDN = "#{curHostname}.#{varDomain}"
+    subconfig.vm.hostname = "#{curFQDN}"
     subconfig.vm.network "private_network", ip: "10.0.0.10", :netmask => "255.255.255.0"
     subconfig.hostmanager.aliases = "edge"
     subconfig.vm.synced_folder varRepo, "/resources", id: "#{varRepo}", owner: "vagrant", group: "vagrant"
@@ -42,6 +44,7 @@ Vagrant.configure("2") do | config |
     end
     subconfig.ssh.username = "root"
     subconfig.ssh.password = "vagrant"
+    #subconfig.vm.provision :shell, inline: "sed -i'' '/^127.0.0.1\t#{curHostname}/d' /etc/hosts"
 
   end
 
@@ -56,7 +59,9 @@ Vagrant.configure("2") do | config |
   (1..KAFKA_NODE_COUNT).each do |i|
     config.vm.define "confluent-#{i}" do |subconfig|
       subconfig.vm.box = BOX
-      subconfig.vm.hostname = "confluent-#{i}.#{varDomain}"
+      curHostname = "confluent-#{i}"
+      curFQDN = "#{curHostname}.#{varDomain}"
+      subconfig.vm.hostname = "#{curFQDN}"
       subconfig.vm.network "private_network", ip: "10.0.0.#{i + 10}", :netmask => "255.255.255.0"
       subconfig.hostmanager.aliases = "confluent-#{i}"
       subconfig.vm.synced_folder varRepo, "/resources", id: "#{varRepo}", owner: "vagrant", group: "vagrant"
@@ -72,13 +77,15 @@ Vagrant.configure("2") do | config |
       end
       subconfig.ssh.username = "root"
       subconfig.ssh.password = "vagrant"
+      #subconfig.vm.provision :shell, inline: "sed -i'' '/^127.0.0.1\t#{curHostname}/d' /etc/hosts"
+
 
       if i == KAFKA_NODE_COUNT
         subconfig.vm.provision :ansible do |ansible|
           ansible.raw_ssh_args = ANSIBLE_RAW_SSH_ARGS
           ansible.limit = "all"
           ansible.playbook = "ansible/playbook.yml"
-          ansible.verbose = "vvv"
+          #ansible.verbose = "vvv"
           ansible.groups = {
             "confluentmasters" => ["confluent-1","confluent-2"],
             "workers" => ["confluent-1","confluent-2","confluent-3","confluent-4"],
@@ -89,7 +96,7 @@ Vagrant.configure("2") do | config |
                                "schemaregistryUrl" => "http://confluent-1:8081,http://confluent-2:8081",
                                "restBootstrapServers" => "PLAINTEXT://confluent-1:9092"
                               },
-            "zookeepers" => ["confluent-1.scigility.demo","confluent-2.scigility.demo","confluent-3.scigility.demo"],
+            "zookeepers" => ["confluent-1","confluent-2","confluent-3"],
             "edge-nodes" => ["edge"],
             "edge-nodes:vars" => {"kdc_master_kdc" => "edge",
                                   "kdc_realm" => "scigility.demo",
