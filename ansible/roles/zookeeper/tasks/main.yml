@@ -1,10 +1,8 @@
-- name: register zookeeper service
-  template: src=confluent-zookeeper.service.j2 dest=/usr/lib/systemd/system/confluent-zookeeper.service owner=root group=root mode=0644
-  become: true
-  notify:
-    - systemdreload
-    - enableZookeeperService
 
-- service:
-    name: confluent-zookeeper
-    state: started
+- name: set zk configs
+  template: src={{ item }}.j2 dest=/etc/kafka/{{ item }} mode=0644
+  with_items:
+    - zookeeper_client_jaas.conf
+    - zookeeper-env.sh
+    - zookeeper_jaas.conf
+    - zookeeper.properties

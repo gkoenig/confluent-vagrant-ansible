@@ -1,0 +1,14 @@
+dataDir=/var/lib/zookeeper
+clientPort=2181
+maxClientCnxns=50
+
+authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+jaasLoginRenew=3600000
+kerberos.removeHostFromPrincipal=true
+kerberos.removeRealmFromPrincipal=true
+
+initLimit=5
+syncLimit=2
+server.1=confluent-1.scigility.demo:2888:3888
+server.2=confluent-2.scigility.demo:2888:3888
+server.3=confluent-3.scigility.demo:2888:3888

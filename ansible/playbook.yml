@@ -3,6 +3,10 @@
   roles:
     - common
 
+- hosts: edge-nodes
+  roles:
+    - kdc
+
 - hosts: zookeepers
   roles:
     - zookeeper
@@ -10,7 +14,7 @@
 - hosts: workers
   roles:
     - kafkabroker
-        
+
 - hosts: confluentmasters
   roles:
     - restproxy

@@ -7,9 +7,9 @@ After = network.target remote-fs.target nss-lookup.target confluent-kafka.servic
 SyslogIdentifier = confluent-schema-registry
 User = confluent
 Type = simple
-ExecStart = /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties
+ExecStart = /opt/confluent/bin/schema-registry-start /etc/schema-registry/schema-registry.properties
 Restart = on-failure
 RestartSec = 10
 
 [Install]
-WantedBy = multi-user.target 
+WantedBy = multi-user.target
