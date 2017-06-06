@@ -91,3 +91,9 @@
 
 - name: set kerberos client configs
   template: src=krb5.conf.j2 dest=/etc/krb5.conf mode=0644
+
+- name: strip hosts file
+  lineinfile:
+    path: /etc/hosts
+    state: absent
+    regexp: '^127\.0\.0\.1\t(?!localhost).*'
