@@ -34,7 +34,6 @@ vagrant up
 - If you are facing issues while downloading the confluent tar.gz from GitHub LFS , try [this public URL](http://packages.confluent.io/archive/3.2/confluent-oss-3.2.1-2.11.tar.gz) to fetch Confluent stack v3.2.1  
 - If you need to modify the default settings (no. of nodes, size of node, host to group mapping, ...) just open [Vagrantfile](./Vagrantfile) and adjust them accordingly.
 
-
 ## Services startup
 after successfull creation of the nodes, the services are **_not_ started automatically**. Hence you have to start it in order by using the scripts in ```/opt/confluent/bin```. Order:
 1. zookeeper-server-start
@@ -46,6 +45,7 @@ Before starting Zookeeper, the corresponding _jaas.conf file needs to be exporte
 ```
 source /etc/kafka/zookeeper-env.sh
 /opt/confluent/bin/zookeeper-server-start /etc/kafka/zookeeper.properties
+
 ```
 To start Zookeeper in **daemon mode**, just add the ```-daemon``` parameter as shown below:  
 ```
