@@ -50,7 +50,7 @@
   with_nested:
     - [ reader, writer, kafka, zookeeper, confluent ]
     - '{{ groups.all }}'
-  when: item not in listuserkeytabs.stdout_lines
+  when: item[0] not in listuserkeytabs.stdout_lines
 
 - name: adjust ownership of keytab files
   file:
