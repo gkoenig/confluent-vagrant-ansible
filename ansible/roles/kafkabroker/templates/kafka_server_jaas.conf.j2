@@ -2,7 +2,7 @@ KafkaServer {
     com.sun.security.auth.module.Krb5LoginModule required
     useKeyTab=true
     storeKey=true
-    keyTab="/vagrant/keytabs/kafka.user.keytab"
+    keyTab="/keytabs/kafka.user.keytab"
     principal="kafka@{{ kdc_realm }}";
 };
 
@@ -11,6 +11,6 @@ Client {
     com.sun.security.auth.module.Krb5LoginModule required
     useKeyTab=true
     storeKey=true
-    keyTab="/vagrant/keytabs/zookeeper.user.keytab"
+    keyTab="/keytabs/zookeeper.user.keytab"
     principal="zookeeper@{{ kdc_realm }}";
 };
