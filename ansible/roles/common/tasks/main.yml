@@ -42,8 +42,7 @@
   file: path={{ item.path }} state=directory owner=confluent group=confluent mode=0755 recurse=yes
   with_items:
     - { path: "/var/lib/kafka", owner: "confluent" }
-    - { path: "/var/lib/zookeeper", owner: "confluent" }
-
+    
 - name: check if confluent target dir exists
   stat:
     path: /opt/confluent/bin

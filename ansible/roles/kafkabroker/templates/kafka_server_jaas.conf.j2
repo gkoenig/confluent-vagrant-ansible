@@ -3,7 +3,7 @@ KafkaServer {
     useKeyTab=true
     storeKey=true
     keyTab="/keytabs/kafka.user.keytab"
-    principal="kafka@{{ kdc_realm }}";
+    principal="kafka/{{ ansible_hostname }}.{{ kdc_realm }}@{{ kdc_realm }}";
 };
 
 // ZooKeeper client authentication
@@ -12,5 +12,5 @@ Client {
     useKeyTab=true
     storeKey=true
     keyTab="/keytabs/zookeeper.user.keytab"
-    principal="zookeeper@{{ kdc_realm }}";
+    principal="zookeeper/{{ ansible_hostname }}.{{ kdc_realm }}@{{ kdc_realm }}";
 };
