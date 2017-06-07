@@ -35,13 +35,14 @@ vagrant up
 - If you need to modify the default settings (no. of nodes, size of node, host to group mapping, ...) just open [Vagrantfile](./Vagrantfile) and adjust them accordingly.
 
 ## Services startup
-after successfull creation of the nodes, the services are **_not_ started automatically**. Hence you have to start it in order by using the scripts in ```/opt/confluent/bin```. Order:
+after successfull creation of the nodes, the services are **_not_ started automatically**. Hence you have to start it in order by using the scripts in ```/opt/confluent/bin``` **on the particular hosts**. Order:
 1. zookeeper-server-start
 2. kafka-server-start
 3. Schema-Registry and REST-Proxy, if required    
 
 ### Zookeeper
 Before starting Zookeeper, the corresponding _jaas.conf file needs to be exported as appropriate env. variable on each of the Zookeeper servers, followed by the actual start script:
+_ssh to nodes included in -zookeepers-_ , then run:
 ```
 source /etc/kafka/zookeeper-env.sh
 /opt/confluent/bin/zookeeper-server-start /etc/kafka/zookeeper.properties
@@ -54,11 +55,36 @@ source /etc/kafka/zookeeper-env.sh
 ```
 
 ### Kafka Brokers
-Similar to Zookeeper, also the Kafka Brokers needs to know the location of the _jaas.conf file, where authentication details are specified. Since this environment offers Kerberos auth. to Kafka, this file needs to be known. Startup procedure (on each of the Kafka nodes):  
+Similar to Zookeeper, also the Kafka Brokers needs to know the location of the _jaas.conf file, where authentication details are specified. Since this environment offers Kerberos auth. to Kafka, this file needs to be known. Startup procedure (on either **one**, **some** or **all** of the Kafka nodes):  
+_ssh to nodes included in -workers-_, then run:
 ```
 source /etc/kafka/kafka-env.sh
 /opt/confluent/bin/kafka-server-start /etc/kafka/server.properties
 ```
 
+### Schema Registry
+first _ssh to nodes of group -confluentmasters-_, then run:
+```
+/opt/confluent/bin/schema-registry-start /etc/schema-registry/schema-registry.properties
+```
+
+### REST Proxy
+first _ssh to nodes of group -confluentmasters-_, then run:
+```
+/opt/confluent/bin/kafka-rest-start /etc/kafka/kafka-rest.properties
+```
+
+
 ## Client interaction examples
-...tbd...
+* **list topics**, as user _confluent_ from node _edge_   
+```
+vagrant ssh edge
+su - confluent
+kinit -kt /keytabs/confluent.user.keytab confluent/$(hostname -f)
+kafka-topics --zookeeper confluent-1.scigility.demo:2181,confluent-2.scigility.demo:2181,confluent-3.scigility.demo:2181 --list
+```
+
+* **describe topic**, e.g. topic "_schemas" which is created by starting the SchemaRegistry once
+```
+kafka-topics --zookeeper confluent-1.scigility.demo:2181,confluent-2.scigility.demo:2181,confluent-3.scigility.demo:2181 --describe --topic _schemas
+```
