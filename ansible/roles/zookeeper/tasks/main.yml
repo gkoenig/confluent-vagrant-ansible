@@ -1,4 +1,12 @@
 
+- name: create zookeeper related directories
+  file: path={{ item.path }} state=directory owner=confluent group=confluent mode=0755 recurse=yes
+  with_items:
+    - { path: "/var/lib/zookeeper", owner: "confluent" }
+
+- name: set zookeepers myid file
+  template: src=myid.j2 dest=/var/lib/zookeeper/myid mode=0644
+
 - name: set zk configs
   template: src={{ item }}.j2 dest=/etc/kafka/{{ item }} mode=0644
   with_items:
