@@ -1,25 +1,5 @@
 - name: set Kafka rest config
   template: src=kafka-rest.properties.j2 dest=/etc/kafka-rest/kafka-rest.properties mode=0644
 
-- name: create Kafka-Rest related symlinks
-  file:
-    src={{ item.src }}
-    dest={{ item.dest }}
-    state=link
-    owner=confluent group=confluent
-    force=yes
-    remote_src=True
-  with_items:
-    - { dest: '/usr/bin/kafka-rest-start', src: '/opt/confluent/bin/kafka-rest-start' }
-    - { dest: '/usr/bin/kafka-rest-stop', src: '/opt/confluent/bin/kafka-rest-stop' }
-
-#- name: Create services
-#  template: src=confluent-kafka-rest.service.j2 dest=/usr/lib/systemd/system/confluent-kafka-rest.service owner=root group=root mode=0644
-#  become: true
-#  notify:
-#    - systemdreload
-#    - enableRestproxyService
-
-#- name: restart confluent-kafka-rest
-#  shell: service confluent-kafka-rest restart
-#  become: true
+- name: set Kafka Rest jaas config
+  template: src=kafka-rest_jaas.conf.j2 dest=/etc/kafka-rest/kafka-rest_jaas.conf mode=0644

@@ -92,9 +92,9 @@ Vagrant.configure("2") do | config |
             "workers:vars" => {"kdc_master_kdc" => "edge",
                                "kdc_realm" => "scigility.demo",
                                "domain" => ".#{varDomain}",
-                               "zkConnect" => "confluent-1.scigility.demo:2181,confluent-2.scigility.demo:2181,confluent-3.scigility.demo:2181",
-                               "schemaregistryUrl" => "http://confluent-1:8081,http://confluent-2:8081",
-                               "restBootstrapServers" => "PLAINTEXT://confluent-1:9092"
+                               "zkConnect" => "confluent-1.#{varDomain}:2181,confluent-2.#{varDomain}:2181,confluent-3.#{varDomain}:2181",
+                               "schemaregistryUrl" => "http://confluent-1.#{varDomain}:8081,http://confluent-2.#{varDomain}:8081",
+                               "restBootstrapServers" => "PLAINTEXT://confluent-1.#{varDomain}:9092"
                               },
             "zookeepers" => ["confluent-1","confluent-2","confluent-3"],
             "edge-nodes" => ["edge"],
