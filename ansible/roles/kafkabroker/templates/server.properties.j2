@@ -3,7 +3,7 @@ broker.id={{ brokerid }}
 
 delete.topic.enable=true
 
-listeners=PLAINTEXT://{{ ansible_hostname }}:9092,SASL_PLAINTEXT://{{ ansible_hostname }}:9099
+listeners=PLAINTEXT://{{ ansible_hostname }}.{{ kdc_realm }}:9092,SASL_PLAINTEXT://{{ ansible_hostname }}.{{ kdc_realm }}:9099
 sasl.enabled.mechanisms=GSSAPI,PLAIN
 sasl.mechanism.inter.broker.protocol=GSSAPI
 security.inter.broker.protocol=SASL_PLAINTEXT
