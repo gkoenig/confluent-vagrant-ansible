@@ -1,5 +1,11 @@
 - name: set Kafka rest config
-  template: src=kafka-rest.properties.j2 dest=/etc/kafka-rest/kafka-rest.properties mode=0644
+  template: src=kafka-rest.properties.j2 dest=/etc/kafka-rest/kafka-rest.properties mode=0644 owner=confluent
 
 - name: set Kafka Rest jaas config
-  template: src=kafka-rest_jaas.conf.j2 dest=/etc/kafka-rest/kafka-rest_jaas.conf mode=0644
+  template: src=kafka-rest_jaas.conf.j2 dest=/etc/kafka-rest/kafka-rest_jaas.conf mode=0644 owner=confluent
+
+- name: set Kafka Rest env script
+  template: src=kafka-rest-env.sh.j2 dest=/etc/kafka-rest/kafka-rest-env.sh mode=0644 owner=confluent
+
+- name: set Kafka Rest start script
+  template: src=start-kafka-rest.sh.j2 dest=/usr/local/bin/start-kafka-rest.sh mode=0644 owner=confluent

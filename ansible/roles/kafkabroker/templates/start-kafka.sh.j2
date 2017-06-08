@@ -1,0 +1,19 @@
+#!/bin/bash
+
+ENVFILE=/etc/kafka/kafka-env.sh
+PROPFILE=/etc/kafka/server.properties
+START=/opt/confluent/bin/kafka-server-start
+
+if [ ! -r $ENVFILE ]; then
+   echo "File '$ENVFILE' not found or not readable."
+   exit 1
+fi
+
+if [ -r $PROPFILE ]; then
+  echo "starting '$START'..."
+  source $ENVFILE && $START -daemon $PROPFILE
+  echo "...done"
+else
+  echo "File '$PROPFILE' not found or not readable."
+  exit 1
+fi

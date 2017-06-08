@@ -1,0 +1,14 @@
+#!/bin/bash
+
+PROPFILE=/etc/schema-registry/schema-registry.properties
+START=/opt/confluent/bin/schema-registry-start
+SRLOG=/var/log/kafka/schema-registry.log
+
+if [ -r $PROPFILE ]; then
+  echo "starting '$START'..."
+  $START $PROPFILE  1>> $SRLOG 2>> $SRLOG &
+  echo "...done"
+else
+  echo "File '$PROPFILE' not found or not readable."
+  exit 1
+fi

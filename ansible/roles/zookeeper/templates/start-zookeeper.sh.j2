@@ -1,0 +1,20 @@
+#!/bin/bash
+
+ZKENV=/etc/kafka/zookeeper-env.sh
+ZKPROP=/etc/kafka/zookeeper.properties
+ZKLOG=/var/log/kafka/zookeeper.log
+
+if [ -r $ZKENV ]; then
+   echo "sourcing '$ZKENV'"
+   source $ZKENV
+else
+   echo "File '$ZKENV' not found or not readable."
+fi
+
+if [ -r $ZKPROP ]; then
+  echo "starting zookeeper..."
+  /opt/confluent/bin/zookeeper-server-start $ZKPROP 1>> $ZKLOG 2>> $ZKLOG &
+  echo "...done"
+else
+  echo "File '$ZKPROP' not found or not readable."
+fi
