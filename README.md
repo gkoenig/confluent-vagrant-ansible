@@ -74,6 +74,13 @@ first _ssh to nodes of group -confluentmasters-_, then run:
 /opt/confluent/bin/kafka-rest-start /etc/kafka/kafka-rest.properties
 ```
 
+to let the REST Proxy talk GSSAPI secured and start it in the background, do the following:
+```
+export KAFKAREST_OPTS="-Djava.security.auth.login.config=/etc/kafka-rest/kafka-rest_jaas.conf -Djava.security.krb5.conf=/etc/krb5.conf"
+kinit -kt /keytabs/confluent.user.keytab confluent/$(hostname -f)
+/opt/confluent/bin/kafka-rest-start /etc/kafka-rest/kafka-rest.properties 1>> /var/log/kafka/kafka-rest.log 2>> /var/log/kafka/kafka-rest.log &
+
+```
 
 ## Client interaction examples
 * **list topics**, as user _confluent_ from node _edge_   
@@ -87,4 +94,9 @@ kafka-topics --zookeeper confluent-1.scigility.demo:2181,confluent-2.scigility.d
 * **describe topic**, e.g. topic "_schemas" which is created by starting the SchemaRegistry once
 ```
 kafka-topics --zookeeper confluent-1.scigility.demo:2181,confluent-2.scigility.demo:2181,confluent-3.scigility.demo:2181 --describe --topic _schemas
+```
+
+* **list topics via REST Proxy** , using ```curl``` from edge node, assuming REST Proxy is running on node _confluent-2.scigility.demo_
+```
+curl "http://confluent-2.scigility.demo:8082/topics"
 ```
