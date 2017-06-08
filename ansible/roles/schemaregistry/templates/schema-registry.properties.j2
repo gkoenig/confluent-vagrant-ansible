@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-listeners=http://0.0.0.0:8081
+listeners=http://{{ ansible_hostname }}.{{ kdc_realm }}:8081
+host.name={{ ansible_hostname }}.{{ kdc_realm }}
 kafkastore.connection.url={{ zkConnect }}
 kafkastore.topic=_schemas
 debug=false
 master.eligibility=true
+schema.registry.zk.namespace=schema-registry
