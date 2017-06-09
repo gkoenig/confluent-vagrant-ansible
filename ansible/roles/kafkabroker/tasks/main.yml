@@ -4,9 +4,5 @@
 - name: set broker jaas config
   template: src=kafka_server_jaas.conf.j2 dest=/etc/kafka/kafka_server_jaas.conf mode=0644 owner=confluent
 
-#- name: register Kafka service
-#  template: src=confluent-kafka.service.j2 dest=/usr/lib/systemd/system/confluent-kafka.service owner=root group=root mode=0644
-#  become: true
-#  notify:
-#    - systemdreload
-#    - enableKafkaService
+- name: set broker start script
+  template: src=start-kafka.sh.j2 dest=/usr/local/bin/start-kafka.sh mode=0644 owner=confluent

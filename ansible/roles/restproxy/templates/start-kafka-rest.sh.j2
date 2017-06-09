@@ -1,0 +1,20 @@
+#!/bin/bash
+
+RESTENV=/etc/kafka/kafka-rest-env.sh
+RESTPROP=/etc/kafka/kafka-rest.properties
+RESTLOG=/var/log/kafka/kafka-rest.log
+
+if [ -r $RESTENV ]; then
+   echo "sourcing '$RESTENV'"
+   source $RESTENV
+else
+   echo "File '$RESTENV' not found or not readable."
+fi
+
+if [ -r $RESTPROP ]; then
+  echo "starting kafka-rest..."
+  /opt/confluent/bin/kafka-rest-start $RESTPROP 1>> $RESTLOG 2>> $RESTLOG &
+  echo "...done"
+else
+  echo "File '$RESTPROP' not found or not readable."
+fi

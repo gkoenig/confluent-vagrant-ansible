@@ -5,10 +5,13 @@
     - { path: "/var/lib/zookeeper", owner: "confluent" }
 
 - name: set zookeepers myid file
-  template: src=myid.j2 dest=/var/lib/zookeeper/myid mode=0644
+  template: src=myid.j2 dest=/var/lib/zookeeper/myid mode=0644  owner=confluent
+
+- name: set zookeeper start script
+  template: src=start-zookeeper.sh.j2 dest=/usr/local/bin/start-zookeeper.sh mode=0644  owner=confluent
 
 - name: set zk configs
-  template: src={{ item }}.j2 dest=/etc/kafka/{{ item }} mode=0644
+  template: src={{ item }}.j2 dest=/etc/kafka/{{ item }} mode=0644  owner=confluent
   with_items:
     - zookeeper_client_jaas.conf
     - zookeeper-env.sh
